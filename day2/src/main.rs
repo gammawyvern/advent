@@ -4,7 +4,10 @@ use std::fs::File;
 fn main() {
     let reports = load_reports("./input.txt");
     let safety = safety_report(&reports);
-    println!("{}", safety);
+    let dampened_safety = dampen_report(&reports);
+
+    println!("Strict Safety Report: {}", safety);
+    println!("Dampened Safety Report: {}", dampened_safety);
 }
 
 fn load_reports(path: &str) -> Vec<Vec<usize>> {
@@ -38,6 +41,27 @@ fn safety_report(reports: &[Vec<usize>]) -> usize {
                 });
 
             (inc || dec) && safe
+        })
+        .count()
+}
+
+/// Exhaustive report, not very efficient
+fn dampen_report(reports: &[Vec<usize>]) -> usize {
+    reports 
+        .iter()
+        .filter(|report| {
+            let mut all_possible = Vec::new(); 
+
+            for l in 0..report.len() {
+                let new_report = [
+                    &report[0..l],
+                    &report[l+1..]
+                ].concat();
+
+                all_possible.push(new_report);
+            }
+
+            safety_report(&all_possible) > 0
         })
         .count()
 }
