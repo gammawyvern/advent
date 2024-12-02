@@ -4,12 +4,7 @@ use std::fs::File;
 fn main() {
     let reports = load_reports("./input.txt");
     let safety = safety_report(&reports);
-
-    reports
-        .iter()
-        .for_each(|report| {
-            report.iter();
-        });
+    println!("{}", safety);
 }
 
 fn load_reports(path: &str) -> Vec<Vec<usize>> {
@@ -31,9 +26,18 @@ fn load_reports(path: &str) -> Vec<Vec<usize>> {
 fn safety_report(reports: &[Vec<usize>]) -> usize {
     reports
         .iter()
-        .map(|report| {
+        .filter(|report| {
+            let inc = report.iter().is_sorted();
+            let dec = report.iter().rev().is_sorted();
 
+            let safe = report
+                .windows(2)
+                .all(|levels| {
+                    let diff = levels[0].abs_diff(levels[1]);
+                    diff > 0 && diff <= 3
+                });
+
+            (inc || dec) && safe
         })
-        .filter(|safe| safe)
         .count()
 }
