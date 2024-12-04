@@ -32,30 +32,32 @@ fn search_puzzle(puzzle: &Vec<Vec<char>>, word: &str) {
     let rows = puzzle.len();
     let cols = puzzle[0].len(); 
 
-    for row in 0..rows {
-        for col in 0..cols {
-            // if puzzle[row][col] == word.chars().nth(0) {
-            //     println!("Potential word found");
-            // }
-        }
-    }
+    let point = (0, 7);
+    let found = search_for_word(&puzzle, point, (1, -1), "XMAS");
+    println!("{}", found);
 }
 
-fn search_for_word(puzzle: &Vec<Vec<char>>, point: (usize, usize), dir: (usize, usize), word: &str) -> bool {
+fn search_for_word(puzzle: &Vec<Vec<char>>, point: (usize, usize), dir: (isize, isize), word: &str) -> bool {
     let next_char = match word.chars().nth(0) {
         Some(chr) => chr,
-        None => return false,
+        None => return true,
     };
 
+    // TODO replace
     if !is_point_valid(&puzzle, point) {
         return false;
+    }
+
+    if dir.0.is_negative() {
+        next_row
     }
 
     if puzzle[point.0][point.1] != next_char {
         return false;
     }
 
-    true
+    let next_point = (point.0 + dir.0, point.1 + dir.1);
+    search_for_word(&puzzle, next_point, dir, &word[1..])
 }
 
 fn is_point_valid(puzzle: &Vec<Vec<char>>, point: (usize, usize)) -> bool {
